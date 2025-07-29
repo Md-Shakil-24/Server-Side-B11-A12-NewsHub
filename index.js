@@ -346,7 +346,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
 
 
 
-    
+    // publisher request
 
     app.post("/publisher-request", verifyFirebaseToken, async (req, res) => {
       const email = req.user.email;
