@@ -434,7 +434,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
     });
 
    
-
+//subcription
     app.post("/subscribe/:email", verifyFirebaseToken, async (req, res) => {
       try {
         const { duration } = req.body;
