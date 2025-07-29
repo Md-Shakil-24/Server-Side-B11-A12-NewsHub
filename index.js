@@ -161,7 +161,7 @@ async function run() {
 
 
 
-
+//latest news
 
 
 app.get("/latest", async (req, res) => {
@@ -206,30 +206,6 @@ app.get("/stats", async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
 
     
     app.put("/articles/:id", verifyFirebaseToken, async (req, res) => {
