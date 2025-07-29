@@ -412,7 +412,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
     });
 
    
-
+//count pending
     app.get("/admin/article-requests/count-pending", async (req, res) => {
       try {
         const count = await articleCol.countDocuments({ status: "pending" });
