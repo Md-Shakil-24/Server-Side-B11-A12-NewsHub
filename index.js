@@ -280,7 +280,7 @@ app.get("/stats", async (req, res) => {
     });
 
  
-
+//publisher
     app.post("/publishers", async (req, res) => {
       const { name, email, logo } = req.body;
       const exists = await publisherCol.findOne({ email });
