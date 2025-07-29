@@ -384,7 +384,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
       const result = await publisherRequestCol.find().toArray();
       res.send(result);
     });
-
+// approve
     app.patch("/admin/publisher-requests/approve/:id", async (req, res) => {
       const id = req.params.id;
       const request = await publisherRequestCol.findOne({ _id: new ObjectId(id) });
