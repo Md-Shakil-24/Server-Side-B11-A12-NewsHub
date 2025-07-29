@@ -405,7 +405,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
       await publisherRequestCol.deleteOne({ _id: new ObjectId(id) });
       res.send({ success: true });
     });
-
+//decline
     app.patch("/admin/publisher-requests/decline/:id", async (req, res) => {
       const result = await publisherRequestCol.deleteOne({ _id: new ObjectId(req.params.id) });
       res.send(result);
