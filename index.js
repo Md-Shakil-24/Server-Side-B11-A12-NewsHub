@@ -479,7 +479,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
     });
 
   
-
+//get stats
     app.get("/stats", async (req, res) => {
       const users = await userCol.find().toArray();
       const normal = users.filter((u) => !u.premiumTaken).length;
