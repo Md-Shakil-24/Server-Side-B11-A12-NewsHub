@@ -472,7 +472,7 @@ app.get("/publisher-request/check", verifyFirebaseToken, async (req, res) => {
         res.status(500).send({ error: "Subscription failed" });
       }
     });
-
+//premiun article
     app.get("/premium-articles", verifyFirebaseToken, async (req, res) => {
       const result = await articleCol.find({ isPremium: true, status: "approved" }).toArray();
       res.send(result);
