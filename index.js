@@ -242,7 +242,7 @@ app.get("/stats", async (req, res) => {
       res.send(result);
     });
 
-    
+    //admin/article
 
     app.get("/admin/articles", async (req, res) => {
       const result = await articleCol.find().toArray();
