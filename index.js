@@ -39,7 +39,7 @@ function verifyFirebaseToken(req, res, next) {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("newspaperDB");
 
     const userCol = db.collection("users");
@@ -74,10 +74,33 @@ async function run() {
     });
 
    
+    // app.get("/users", async (req, res) => {
+    //   const users = await userCol.find().toArray();
+    //   res.send(users);
+    // });
     app.get("/users", async (req, res) => {
-      const users = await userCol.find().toArray();
-      res.send(users);
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const [users, total] = await Promise.all([
+      userCol.find().skip(skip).limit(limit).toArray(),
+      userCol.countDocuments()
+    ]);
+
+    res.send({
+      users,
+      total,
+      page,
+      limit,
     });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).send({ error: "Failed to fetch users" });
+  }
+});
+
 
    
     app.patch("/users/admin/:email", async (req, res) => {
@@ -112,18 +135,42 @@ async function run() {
     });
 
    
-    app.get("/articles", async (req, res) => {
-      const { publisher, tag, search, sort, limit } = req.query;
-      const filter = { status: "approved" };
-      if (publisher) filter.publisher = publisher;
-      if (tag) filter.tags = tag;
-      if (search) filter.title = { $regex: search, $options: "i" };
-      const sortOpt = sort ? { [sort]: -1 } : { postedAt: -1 };
-      const max = parseInt(limit) || 0;
+    // app.get("/articles", async (req, res) => {
+    //   const { publisher, tag, search, sort, limit } = req.query;
+    //   const filter = { status: "approved" };
+    //   if (publisher) filter.publisher = publisher;
+    //   if (tag) filter.tags = tag;
+    //   if (search) filter.title = { $regex: search, $options: "i" };
+    //   const sortOpt = sort ? { [sort]: -1 } : { postedAt: -1 };
+    //   const max = parseInt(limit) || 0;
 
-      const articles = await articleCol.find(filter).sort(sortOpt).limit(max).toArray();
-      res.send(articles);
-    });
+    //   const articles = await articleCol.find(filter).sort(sortOpt).limit(max).toArray();
+    //   res.send(articles);
+    // });
+
+    app.get("/articles", async (req, res) => {
+  try {
+    const { publisher, tag, search, sort, limit } = req.query;
+    const filter = { status: "approved" };
+
+    if (publisher) filter.publisher = publisher;
+
+    // FIXED: match articles where tags array contains the tag string
+    if (tag) filter.tags = { $in: [tag] };
+
+    if (search) filter.title = { $regex: search, $options: "i" };
+
+    const sortOpt = sort ? { [sort]: -1 } : { postedAt: -1 };
+    const max = parseInt(limit) || 0;
+
+    const articles = await articleCol.find(filter).sort(sortOpt).limit(max).toArray();
+    res.send(articles);
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    res.status(500).send({ error: "Failed to fetch articles" });
+  }
+});
+
 
     
     app.get("/articles/:id", async (req, res) => {
@@ -220,10 +267,34 @@ app.get("/stats", async (req, res) => {
 
     //admin/article
 
+    // app.get("/admin/articles", async (req, res) => {
+    //   const result = await articleCol.find().toArray();
+    //   res.send(result);
+    // });
+
     app.get("/admin/articles", async (req, res) => {
-      const result = await articleCol.find().toArray();
-      res.send(result);
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const [articles, total] = await Promise.all([
+      articleCol.find().skip(skip).limit(limit).toArray(),
+      articleCol.countDocuments()
+    ]);
+
+    res.send({
+      articles,
+      total,
+      page,
+      limit
     });
+  } catch (error) {
+    console.error("Error fetching paginated articles:", error);
+    res.status(500).send({ error: "Failed to fetch articles" });
+  }
+});
+
 
     app.patch("/admin/articles/approve/:id", async (req, res) => {
       const result = await articleCol.updateOne(
@@ -242,13 +313,30 @@ app.get("/stats", async (req, res) => {
       res.send(result);
     });
 
-    app.patch("/admin/articles/premium/:id", async (req, res) => {
-      const result = await articleCol.updateOne(
-        { _id: new ObjectId(req.params.id) },
-        { $set: { isPremium: true } }
-      );
-      res.send(result);
-    });
+    // app.patch("/admin/articles/premium/:id", async (req, res) => {
+    //   const result = await articleCol.updateOne(
+    //     { _id: new ObjectId(req.params.id) },
+    //     { $set: { isPremium: true } }
+    //   );
+    //   res.send(result);
+    // });
+
+
+app.patch("/admin/articles/premium/:id", async (req, res) => {
+  const { isPremium } = req.body;
+  const result = await articleCol.updateOne(
+    { _id: new ObjectId(req.params.id) },
+    { $set: { isPremium: isPremium === true } }
+  );
+  res.send(result);
+});
+
+
+
+
+
+
+
 
     app.delete("/admin/articles/:id", async (req, res) => {
       const result = await articleCol.deleteOne({ _id: new ObjectId(req.params.id) });
