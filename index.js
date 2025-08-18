@@ -268,7 +268,7 @@ app.get("/stats", async (req, res) => {
     /admin/article
 
     
-    //   const result = await articleCol.find().toArray();
+    
     //   res.send(result);
     // });
 
