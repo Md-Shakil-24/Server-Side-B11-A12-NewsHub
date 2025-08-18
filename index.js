@@ -269,7 +269,7 @@ app.get("/stats", async (req, res) => {
 
     
     
-    //   res.send(result);
+    
     // });
 
     app.get("/admin/articles", async (req, res) => {
