@@ -313,7 +313,7 @@ app.get("/stats", async (req, res) => {
       res.send(result);
     });
 
-    // app.patch("/admin/articles/premium/:id", async (req, res) => {
+    
     //   const result = await articleCol.updateOne(
     //     { _id: new ObjectId(req.params.id) },
     //     { $set: { isPremium: true } }
